@@ -1,30 +1,32 @@
 package database
 
 import (
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
-	"io/fs"
-	"os"
-	"path"
+	//"io/fs"
+	//"os"
+	//"path"
 	"x-ui/config"
 	"x-ui/database/model"
+
+	"gorm.io/driver/mysql"
+	//"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 var db *gorm.DB
 
 func initUser() error {
-	err := db.AutoMigrate(&model.User{})
+	err := db.AutoMigrate(&model.V2rayUser{})
 	if err != nil {
 		return err
 	}
 	var count int64
-	err = db.Model(&model.User{}).Count(&count).Error
+	err = db.Model(&model.V2rayUser{}).Count(&count).Error
 	if err != nil {
 		return err
 	}
 	if count == 0 {
-		user := &model.User{
+		user := &model.V2rayUser{
 			Username: "admin",
 			Password: "admin",
 		}
@@ -34,20 +36,21 @@ func initUser() error {
 }
 
 func initInbound() error {
-	return db.AutoMigrate(&model.Inbound{})
+	return db.AutoMigrate(&model.V2rayInbound{})
 }
 
 func initSetting() error {
-	return db.AutoMigrate(&model.Setting{})
+	return db.AutoMigrate(&model.V2raySetting{})
 }
 
 func InitDB(dbPath string) error {
-	dir := path.Dir(dbPath)
+	/*dir := path.Dir(dbPath)
 	err := os.MkdirAll(dir, fs.ModeDir)
 	if err != nil {
 		return err
-	}
+	}*/
 
+	var err error
 	var gormLogger logger.Interface
 
 	if config.IsDebug() {
@@ -59,7 +62,7 @@ func InitDB(dbPath string) error {
 	c := &gorm.Config{
 		Logger: gormLogger,
 	}
-	db, err = gorm.Open(sqlite.Open(dbPath), c)
+	db, err = gorm.Open(mysql.Open(config.GetMySqlPath()), c)
 	if err != nil {
 		return err
 	}

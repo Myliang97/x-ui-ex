@@ -48,3 +48,7 @@ func IsDebug() bool {
 func GetDBPath() string {
 	return fmt.Sprintf("/etc/%s/%s.db", GetName(), GetName())
 }
+
+func GetMySqlPath() string {
+	return "root:root@tcp(192.168.31.96:3306)/chatgpt?charset=utf8"
+}

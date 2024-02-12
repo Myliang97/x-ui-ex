@@ -23,7 +23,7 @@ var xrayTemplateConfig string
 var defaultValueMap = map[string]string{
 	"xrayTemplateConfig": xrayTemplateConfig,
 	"webListen":          "",
-	"webPort":            "54321",
+	"webPort":            "9000",
 	"webCertFile":        "",
 	"webKeyFile":         "",
 	"secret":             random.Seq(32),
@@ -40,8 +40,8 @@ type SettingService struct {
 
 func (s *SettingService) GetAllSetting() (*entity.AllSetting, error) {
 	db := database.GetDB()
-	settings := make([]*model.Setting, 0)
-	err := db.Model(model.Setting{}).Find(&settings).Error
+	settings := make([]*model.V2raySetting, 0)
+	err := db.Model(model.V2raySetting{}).Find(&settings).Error
 	if err != nil {
 		return nil, err
 	}
@@ -115,13 +115,13 @@ func (s *SettingService) GetAllSetting() (*entity.AllSetting, error) {
 
 func (s *SettingService) ResetSettings() error {
 	db := database.GetDB()
-	return db.Where("1 = 1").Delete(model.Setting{}).Error
+	return db.Where("1 = 1").Delete(model.V2raySetting{}).Error
 }
 
-func (s *SettingService) getSetting(key string) (*model.Setting, error) {
+func (s *SettingService) getSetting(key string) (*model.V2raySetting, error) {
 	db := database.GetDB()
-	setting := &model.Setting{}
-	err := db.Model(model.Setting{}).Where("key = ?", key).First(setting).Error
+	setting := &model.V2raySetting{}
+	err := db.Model(model.V2raySetting{}).Where("'key' = ?", key).First(setting).Error
 	if err != nil {
 		return nil, err
 	}
@@ -132,7 +132,7 @@ func (s *SettingService) saveSetting(key string, value string) error {
 	setting, err := s.getSetting(key)
 	db := database.GetDB()
 	if database.IsNotFound(err) {
-		return db.Create(&model.Setting{
+		return db.Create(&model.V2raySetting{
 			Key:   key,
 			Value: value,
 		}).Error

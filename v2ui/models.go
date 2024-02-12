@@ -21,8 +21,8 @@ func (i *V2Inbound) TableName() string {
 	return "inbound"
 }
 
-func (i *V2Inbound) ToInbound(userId int) *model.Inbound {
-	return &model.Inbound{
+func (i *V2Inbound) ToInbound(userId int) *model.V2rayInbound {
+	return &model.V2rayInbound{
 		UserId:         userId,
 		Up:             i.Up,
 		Down:           i.Down,

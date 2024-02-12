@@ -14,20 +14,20 @@ import (
 type InboundService struct {
 }
 
-func (s *InboundService) GetInbounds(userId int) ([]*model.Inbound, error) {
+func (s *InboundService) GetInbounds(userId int) ([]*model.V2rayInbound, error) {
 	db := database.GetDB()
-	var inbounds []*model.Inbound
-	err := db.Model(model.Inbound{}).Where("user_id = ?", userId).Find(&inbounds).Error
+	var inbounds []*model.V2rayInbound
+	err := db.Model(model.V2rayInbound{}).Where("user_id = ?", userId).Find(&inbounds).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
 	return inbounds, nil
 }
 
-func (s *InboundService) GetAllInbounds() ([]*model.Inbound, error) {
+func (s *InboundService) GetAllInbounds() ([]*model.V2rayInbound, error) {
 	db := database.GetDB()
-	var inbounds []*model.Inbound
-	err := db.Model(model.Inbound{}).Find(&inbounds).Error
+	var inbounds []*model.V2rayInbound
+	err := db.Model(model.V2rayInbound{}).Find(&inbounds).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
@@ -36,7 +36,7 @@ func (s *InboundService) GetAllInbounds() ([]*model.Inbound, error) {
 
 func (s *InboundService) checkPortExist(port int, ignoreId int) (bool, error) {
 	db := database.GetDB()
-	db = db.Model(model.Inbound{}).Where("port = ?", port)
+	db = db.Model(model.V2rayInbound{}).Where("port = ?", port)
 	if ignoreId > 0 {
 		db = db.Where("id != ?", ignoreId)
 	}
@@ -48,7 +48,7 @@ func (s *InboundService) checkPortExist(port int, ignoreId int) (bool, error) {
 	return count > 0, nil
 }
 
-func (s *InboundService) AddInbound(inbound *model.Inbound) error {
+func (s *InboundService) AddInbound(inbound *model.V2rayInbound) error {
 	exist, err := s.checkPortExist(inbound.Port, 0)
 	if err != nil {
 		return err
@@ -60,7 +60,7 @@ func (s *InboundService) AddInbound(inbound *model.Inbound) error {
 	return db.Save(inbound).Error
 }
 
-func (s *InboundService) AddInbounds(inbounds []*model.Inbound) error {
+func (s *InboundService) AddInbounds(inbounds []*model.V2rayInbound) error {
 	for _, inbound := range inbounds {
 		exist, err := s.checkPortExist(inbound.Port, 0)
 		if err != nil {
@@ -94,20 +94,20 @@ func (s *InboundService) AddInbounds(inbounds []*model.Inbound) error {
 
 func (s *InboundService) DelInbound(id int) error {
 	db := database.GetDB()
-	return db.Delete(model.Inbound{}, id).Error
+	return db.Delete(model.V2rayInbound{}, id).Error
 }
 
-func (s *InboundService) GetInbound(id int) (*model.Inbound, error) {
+func (s *InboundService) GetInbound(id int) (*model.V2rayInbound, error) {
 	db := database.GetDB()
-	inbound := &model.Inbound{}
-	err := db.Model(model.Inbound{}).First(inbound, id).Error
+	inbound := &model.V2rayInbound{}
+	err := db.Model(model.V2rayInbound{}).First(inbound, id).Error
 	if err != nil {
 		return nil, err
 	}
 	return inbound, nil
 }
 
-func (s *InboundService) UpdateInbound(inbound *model.Inbound) error {
+func (s *InboundService) UpdateInbound(inbound *model.V2rayInbound) error {
 	exist, err := s.checkPortExist(inbound.Port, inbound.Id)
 	if err != nil {
 		return err
@@ -143,7 +143,7 @@ func (s *InboundService) AddTraffic(traffics []*xray.Traffic) (err error) {
 		return nil
 	}
 	db := database.GetDB()
-	db = db.Model(model.Inbound{})
+	db = db.Model(model.V2rayInbound{})
 	tx := db.Begin()
 	defer func() {
 		if err != nil {
@@ -169,7 +169,7 @@ func (s *InboundService) AddTraffic(traffics []*xray.Traffic) (err error) {
 func (s *InboundService) DisableInvalidInbounds() (int64, error) {
 	db := database.GetDB()
 	now := time.Now().Unix() * 1000
-	result := db.Model(model.Inbound{}).
+	result := db.Model(model.V2rayInbound{}).
 		Where("((total > 0 and up + down >= total) or (expiry_time > 0 and expiry_time <= ?)) and enable = ?", now, true).
 		Update("enable", false)
 	err := result.Error

@@ -2,13 +2,14 @@ package controller
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"strconv"
 	"x-ui/database/model"
 	"x-ui/logger"
 	"x-ui/web/global"
 	"x-ui/web/service"
 	"x-ui/web/session"
+
+	"github.com/gin-gonic/gin"
 )
 
 type InboundController struct {
@@ -56,7 +57,7 @@ func (a *InboundController) getInbounds(c *gin.Context) {
 }
 
 func (a *InboundController) addInbound(c *gin.Context) {
-	inbound := &model.Inbound{}
+	inbound := &model.V2rayInbound{}
 	err := c.ShouldBind(inbound)
 	if err != nil {
 		jsonMsg(c, "添加", err)
@@ -92,7 +93,7 @@ func (a *InboundController) updateInbound(c *gin.Context) {
 		jsonMsg(c, "修改", err)
 		return
 	}
-	inbound := &model.Inbound{
+	inbound := &model.V2rayInbound{
 		Id: id,
 	}
 	err = c.ShouldBind(inbound)

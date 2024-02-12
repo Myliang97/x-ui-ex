@@ -34,7 +34,7 @@ func MigrateFromV2UI(dbPath string) error {
 		return common.NewError("get x-ui user failed:", err)
 	}
 
-	inbounds := make([]*model.Inbound, 0)
+	inbounds := make([]*model.V2rayInbound, 0)
 	for _, v2inbound := range v2Inbounds {
 		inbounds = append(inbounds, v2inbound.ToInbound(user.Id))
 	}

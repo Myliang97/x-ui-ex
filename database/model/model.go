@@ -17,13 +17,13 @@ const (
 	Shadowsocks Protocol = "shadowsocks"
 )
 
-type User struct {
+type V2rayUser struct {
 	Id       int    `json:"id" gorm:"primaryKey;autoIncrement"`
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
-type Inbound struct {
+type V2rayInbound struct {
 	Id         int    `json:"id" form:"id" gorm:"primaryKey;autoIncrement"`
 	UserId     int    `json:"-"`
 	Up         int64  `json:"up" form:"up"`
@@ -43,7 +43,7 @@ type Inbound struct {
 	Sniffing       string   `json:"sniffing" form:"sniffing"`
 }
 
-func (i *Inbound) GenXrayInboundConfig() *xray.InboundConfig {
+func (i *V2rayInbound) GenXrayInboundConfig() *xray.InboundConfig {
 	listen := i.Listen
 	if listen != "" {
 		listen = fmt.Sprintf("\"%v\"", listen)
@@ -59,7 +59,7 @@ func (i *Inbound) GenXrayInboundConfig() *xray.InboundConfig {
 	}
 }
 
-type Setting struct {
+type V2raySetting struct {
 	Id    int    `json:"id" form:"id" gorm:"primaryKey;autoIncrement"`
 	Key   string `json:"key" form:"key"`
 	Value string `json:"value" form:"value"`
