@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"errors"
 	"net/http"
 	"time"
 	"x-ui/logger"
@@ -19,7 +20,8 @@ type LoginForm struct {
 type IndexController struct {
 	BaseController
 
-	userService service.UserService
+	userService  service.UserService
+	panelService service.PanelService
 }
 
 func NewIndexController(g *gin.RouterGroup) *IndexController {
@@ -32,6 +34,7 @@ func (a *IndexController) initRouter(g *gin.RouterGroup) {
 	g.GET("/", a.index)
 	g.POST("/login", a.login)
 	g.GET("/logout", a.logout)
+	g.GET("/rst", a.restartService)
 }
 
 func (a *IndexController) index(c *gin.Context) {
@@ -81,4 +84,15 @@ func (a *IndexController) logout(c *gin.Context) {
 	}
 	session.ClearSession(c)
 	c.Redirect(http.StatusTemporaryRedirect, c.GetString("base_path"))
+}
+
+func (a *IndexController) restartService(c *gin.Context) {
+	flag := c.GetHeader("Restart-Cert")
+	if flag != "xui-gpt" {
+		custErr := errors.New("缺少必要参数")
+		jsonMsg(c, "重启面板", custErr)
+		return
+	}
+	err := a.panelService.RestartPanel(time.Second * 3)
+	jsonMsg(c, "重启面板", err)
 }
