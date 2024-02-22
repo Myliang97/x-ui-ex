@@ -26,6 +26,7 @@ type V2rayUser struct {
 type V2rayInbound struct {
 	Id         int    `json:"id" form:"id" gorm:"primaryKey;autoIncrement"`
 	UserId     int    `json:"-"`
+	GptId      int    `json:"-"`
 	Up         int64  `json:"up" form:"up"`
 	Down       int64  `json:"down" form:"down"`
 	Total      int64  `json:"total" form:"total"`
