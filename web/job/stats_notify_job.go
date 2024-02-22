@@ -33,6 +33,7 @@ func NewStatsNotifyJob() *StatsNotifyJob {
 }
 
 func (j *StatsNotifyJob) SendMsgToTgbot(msg string) {
+	return
 	//Telegram bot basic info
 	tgBottoken, err := j.settingService.GetTgBotToken()
 	if err != nil {
